@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenvilleRevenueCh10", "GreenvilleRevenueCh10\GreenvilleRevenueCh10.csproj", "{9AE09D6D-5B60-4EE4-A0F5-DD4DAECB6823}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoDemo", "..\PhotoDemo\PhotoDemo\PhotoDemo.csproj", "{2059A51A-9A8D-4F7F-A51F-C932E806ADEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9AE09D6D-5B60-4EE4-A0F5-DD4DAECB6823}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE09D6D-5B60-4EE4-A0F5-DD4DAECB6823}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AE09D6D-5B60-4EE4-A0F5-DD4DAECB6823}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2059A51A-9A8D-4F7F-A51F-C932E806ADEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2059A51A-9A8D-4F7F-A51F-C932E806ADEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2059A51A-9A8D-4F7F-A51F-C932E806ADEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2059A51A-9A8D-4F7F-A51F-C932E806ADEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

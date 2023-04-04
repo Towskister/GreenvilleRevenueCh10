@@ -1,7 +1,11 @@
 ﻿using System;
 using static System.Console;
 using System.Globalization;
-class Contestant
+using System.Diagnostics;
+using Microsoft.VisualBasic;
+using System.Reflection.Metadata;
+
+public class Contestant
 {
     private char talentCode;
     public char TalentCode
@@ -42,9 +46,80 @@ class Contestant
     }
 
     public string Name { get; set; }
+    public int Fee { get; set; }
+    public int Age { get; set; }
     public static char[] talentCodes = { 'S', 'D', 'M', 'O' };
     public static string[] talentStrings = { "Singing", "Dancing", "Musical instrument", "Other" };
 }
+public class ChildContestant : Contestant
+{
+    //Child contestants are 12 years old and younger, and their entry fee is $15.
+    public int fee; 
+    new public int Fee
+    //set the entry fee field to the correct value
+
+    {
+        get {
+            fee = 15;
+            return fee; 
+        } 
+    }
+    public override string ToString()
+        //override the ToString() method to return a string that includes all the contestant data, including the age category and the entry fee.
+    {
+        return "Child Contestant " + Name + " " + TalentCode + "   Fee " + Fee.ToString("C", CultureInfo.GetCultureInfo("en-US"));
+        // Child Contestant Joeph S   Fee $15.00
+    }
+}
+public class TeenContestant : Contestant
+{
+    //Teen contestants are between 13 and 17 years old, inclusive, and their entry fee is $20.
+    public int fee;
+    new public int Fee
+    //set the entry fee field to the correct value
+
+    {
+        get
+        {
+            fee = 20;
+            return fee;
+        }
+    }
+    //override the ToString() method to return a string that includes all the contestant data, including the age category and the entry fee
+    public override string ToString()
+    {
+        return "Teen Contestant " + Name + " " + TalentCode + "   Fee " + Fee.ToString("C", CultureInfo.GetCultureInfo("en-US"));
+    }
+    //Teen Contestant Sara M   Fee $20.00
+}
+
+public class AdultContestant : Contestant
+{
+    //Adult contestants are 18 years old and older, and their entry fee is $30
+    public int fee;
+    new public int Fee
+    //set the entry fee field to the correct value
+    {
+        get
+        {
+            fee = 30;
+            return fee;
+        }
+    }
+    //override the ToString() method to return a string that includes all the contestant data, including the age category and the entry fee
+    public override string ToString()
+    {
+        return "Adult Contestant " + Name + " " + TalentCode + "   Fee " + Fee.ToString("C", CultureInfo.GetCultureInfo("en-US"));
+    }
+    //Adult Contestant Joy D   Fee $30.00
+}
+/*the output from ToString() should be displayed in the following format:
+
+Child Contestant Joeph S   Fee $15.00
+Teen Contestant Sara M   Fee $20.00
+Adult Contestant Joy D   Fee $30.00
+*/
+
 class GreenvilleRevenue
 {
     public static string nl = Environment.NewLine;
@@ -53,31 +128,28 @@ class GreenvilleRevenue
     {
         const int MIN_CONTESTANTS = 0;
         const int MAX_CONTESTANTS = 30;
+        const int MIN_AGE = 1;
+        const int MAX_AGE = 100;
         const double ENTRANCE_FEE = 25;
         string nl = Environment.NewLine;
 
-        int numContestantsLastYear, numContestantsThisYear;
-        string[] contestantNames = new string[MAX_CONTESTANTS];
-        char[] contestantTalents = new char[MAX_CONTESTANTS];
+        int numContestantsThisYear;
         char[] talentCodes = { 'S', 'D', 'M', 'O' };
         string[] talentStrings = { "Singing", "Dancing", "Musical instrument", "Other" };
         int[] talentCounts = { 0, 0, 0, 0 };
         double revenue;
 
-        numContestantsLastYear = getContestantNumber("last", MIN_CONTESTANTS, MAX_CONTESTANTS);
         numContestantsThisYear = getContestantNumber("this", MIN_CONTESTANTS, MAX_CONTESTANTS);
-
-        WriteLine($"Last year's competition had {numContestantsLastYear} contestants, and this year's has {numContestantsThisYear} contestants");
 
         revenue = numContestantsThisYear * ENTRANCE_FEE;
         WriteLine("Revenue expected this year is {0}", revenue.ToString("C", CultureInfo.GetCultureInfo("en-US")));
 
-        displayRelationship(numContestantsThisYear, numContestantsLastYear);
+        Contestant[] contestants = new Contestant[numContestantsThisYear-1];
+        getContestantData(numContestantsThisYear, contestants, talentCodes, talentStrings, talentCounts,MIN_AGE,MAX_AGE);
+        Contestant[] detailedContestants = new Contestant[numContestantsThisYear - 1];
+        InstContestantType(numContestantsThisYear, contestants, detailedContestants);
 
-        Contestant[] contestants = new Contestant[MAX_CONTESTANTS];
-        getContestantData(numContestantsThisYear, contestants, talentCodes, talentStrings, talentCounts);
-
-        getLists(numContestantsThisYear, talentCodes, talentStrings, contestants, talentCounts);
+        getLists(numContestantsThisYear, talentCodes, talentStrings, detailedContestants, talentCounts);
 
     }
 
@@ -119,7 +191,7 @@ class GreenvilleRevenue
             WriteLine("The competition is the same as last year - BORING!");
         }
     }
-    public static void getContestantData(int numThisYear, Contestant[] contestants, char[] talentCodes, string[] talentCodesStrings, int[] counts)
+    public static void getContestantData(int numThisYear, Contestant[] contestants, char[] talentCodes, string[] talentCodesStrings, int[] counts, int ageMin, int ageMax)
     {
         for (int i = 0; i < numThisYear; i++)
         {
@@ -169,15 +241,33 @@ class GreenvilleRevenue
                     WriteLine("invalid talent code. Please try again.");
                 }
             } while (!validTalentCode);
+                int enteredAge = -1;
+                while (enteredAge < ageMin || enteredAge > ageMax)
+                {
+                    Write($"Enter age of contestant >> ");
+                    if (int.TryParse(ReadLine(), out enteredAge))
+                    {
+                        if (enteredAge < ageMin || enteredAge > ageMax)
+                        {
+                            WriteLine($"invalid input. Number of contestants must be between {ageMin} and {ageMax}. Please try again.");
+                        }
+                    }
+                    else
+                    {
+                        WriteLine("invalid input. must enter an integer");
+                        enteredAge = -1; // This is necessary to reinitialize the numContestants back to -1 as TryParse will default the int variable to 0 
+                    }
+                }
+                contestant.Age = enteredAge;
 
-            contestants[i] = contestant;
+                contestants[i] = contestant;
 
-            int talentIndex = Array.IndexOf(talentCodes, contestant.TalentCode);
-            counts[talentIndex]++;
+            //int talentIndex = Array.IndexOf(talentCodes, contestant.TalentCode);
+            //counts[talentIndex]++;
         }
     }
 
-    public static void getLists(int numContestants, char[] talentCodes, string[] talentStrings, Contestant[] contestants, int[] counts)
+    public static void getLists(int numContestants, char[] talentCodes, string[] talentStrings, Contestant[] detailedContestants, int[] counts)
     {
         WriteLine("The types of talent are:");
 
@@ -226,9 +316,9 @@ class GreenvilleRevenue
                 WriteLine($"Contestants with talent {talentStrings[Array.IndexOf(talentCodes, tCodeInput)]} are:");
                 for (int j = 0; j < numContestants; j++)
                 {
-                    if (contestants[j].TalentCode == tCodeInput)
+                    if (detailedContestants[j].TalentCode == tCodeInput)
                     {
-                        WriteLine($"{contestants[j].Name}");
+                        WriteLine($"{detailedContestants[j].Name}");
                     }
                 }
             }
@@ -249,6 +339,31 @@ class GreenvilleRevenue
                 WriteLine("{0,-25}{1,5}", talentStrings[i], counts[i]);
             }
             WriteLine("Enter a talent code to see a list of contestants, or enter Z to quit");
+        }
+    }
+    public static void InstContestantType(int numContestants, Contestant[] contestants, Contestant[] detailedContestants)
+    {
+        for (int j = 0; j < numContestants; j++)
+        {
+            if (contestants[j].Age <= 12)
+            {
+                ChildContestant contestant = new ChildContestant();
+
+                detailedContestants[i] = contestant;
+            }
+            else if (contestants[j].Age >= 13 && contestants[j].Age <= 17 )
+            {
+                TeenContestant contestant = new TeenContestant();
+
+                contestants[i] = contestant;
+            }
+            else if (contestants[j].Age >= 18)
+            {
+                AdultContestant contestant = new AdultContestant();
+
+               
+            }
+            contestants[j] = contestant;
         }
     }
 
