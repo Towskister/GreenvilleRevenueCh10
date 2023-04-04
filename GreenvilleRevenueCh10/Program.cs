@@ -130,28 +130,29 @@ class GreenvilleRevenue
         const int MAX_CONTESTANTS = 30;
         const int MIN_AGE = 1;
         const int MAX_AGE = 100;
-        const double ENTRANCE_FEE = 25;
-        string nl = Environment.NewLine;
 
         int numContestantsThisYear;
         char[] talentCodes = { 'S', 'D', 'M', 'O' };
         string[] talentStrings = { "Singing", "Dancing", "Musical instrument", "Other" };
         int[] talentCounts = { 0, 0, 0, 0 };
-        double revenue;
-
         numContestantsThisYear = getContestantNumber("this", MIN_CONTESTANTS, MAX_CONTESTANTS);
 
-        revenue = numContestantsThisYear * ENTRANCE_FEE;
-        WriteLine("Revenue expected this year is {0}", revenue.ToString("C", CultureInfo.GetCultureInfo("en-US")));
+        Contestant[] contestants = new Contestant[numContestantsThisYear];
+        Contestant[] detailedContestants = new Contestant[numContestantsThisYear];
 
-        Contestant[] contestants = new Contestant[numContestantsThisYear-1];
-        getContestantData(numContestantsThisYear, contestants, talentCodes, talentStrings, talentCounts,MIN_AGE,MAX_AGE);
-        Contestant[] detailedContestants = new Contestant[numContestantsThisYear - 1];
+        getContestantData(numContestantsThisYear, contestants, talentCodes, talentStrings, talentCounts, MIN_AGE, MAX_AGE);
         InstContestantType(numContestantsThisYear, contestants, detailedContestants);
 
-        getLists(numContestantsThisYear, talentCodes, talentStrings, detailedContestants, talentCounts);
+        double totalRevenue = 0;
+        for (int i = 0; i < numContestantsThisYear; i++)
+        {
+            totalRevenue += detailedContestants[i].Fee;
+        }
+        WriteLine("Revenue expected this year is {0}", totalRevenue.ToString("C", CultureInfo.GetCultureInfo("en-US")));
 
+        getLists(numContestantsThisYear, talentCodes, talentStrings, detailedContestants, talentCounts);
     }
+
 
     public static int getContestantNumber(string competitionYear, int min, int max)
     {
@@ -347,25 +348,37 @@ class GreenvilleRevenue
         {
             if (contestants[j].Age <= 12)
             {
-                ChildContestant contestant = new ChildContestant();
-
-                detailedContestants[i] = contestant;
+                ChildContestant contestant = new ChildContestant
+                {
+                    Name = contestants[j].Name,
+                    TalentCode = contestants[j].TalentCode,
+                    Age = contestants[j].Age
+                };
+                detailedContestants[j] = contestant;
             }
-            else if (contestants[j].Age >= 13 && contestants[j].Age <= 17 )
+            else if (contestants[j].Age >= 13 && contestants[j].Age <= 17)
             {
-                TeenContestant contestant = new TeenContestant();
-
-                contestants[i] = contestant;
+                TeenContestant contestant = new TeenContestant
+                {
+                    Name = contestants[j].Name,
+                    TalentCode = contestants[j].TalentCode,
+                    Age = contestants[j].Age
+                };
+                detailedContestants[j] = contestant;
             }
             else if (contestants[j].Age >= 18)
             {
-                AdultContestant contestant = new AdultContestant();
-
-               
+                AdultContestant contestant = new AdultContestant
+                {
+                    Name = contestants[j].Name,
+                    TalentCode = contestants[j].TalentCode,
+                    Age = contestants[j].Age
+                };
+                detailedContestants[j] = contestant;
             }
-            contestants[j] = contestant;
         }
     }
+
 
 
 }
