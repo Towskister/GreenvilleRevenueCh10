@@ -143,13 +143,6 @@ class GreenvilleRevenue
         getContestantData(numContestantsThisYear, contestants, talentCodes, talentStrings, talentCounts, MIN_AGE, MAX_AGE);
         InstContestantType(numContestantsThisYear, contestants, detailedContestants);
 
-        double totalRevenue = 0;
-        for (int i = 0; i < numContestantsThisYear; i++)
-        {
-            totalRevenue += detailedContestants[i].Fee;
-        }
-        WriteLine("Revenue expected this year is {0}", totalRevenue.ToString("C", CultureInfo.GetCultureInfo("en-US")));
-
         getLists(numContestantsThisYear, talentCodes, talentStrings, detailedContestants, talentCounts);
     }
 
@@ -263,13 +256,22 @@ class GreenvilleRevenue
 
                 contestants[i] = contestant;
 
-            //int talentIndex = Array.IndexOf(talentCodes, contestant.TalentCode);
-            //counts[talentIndex]++;
+            int talentIndex = Array.IndexOf(talentCodes, contestant.TalentCode);
+            counts[talentIndex]++;
         }
     }
 
     public static void getLists(int numContestants, char[] talentCodes, string[] talentStrings, Contestant[] detailedContestants, int[] counts)
     {
+        double totalRevenue = 0;
+        for (int i = 0; i < numContestants; i++)
+        {
+            totalRevenue += detailedContestants[i].Fee;
+        }
+
+        WriteLine("Revenue expected this year is {0}", totalRevenue.ToString("C", CultureInfo.GetCultureInfo("en-US")));
+
+
         WriteLine("The types of talent are:");
 
         for (int i = 0; i < talentCodes.Length; ++i)
@@ -319,8 +321,9 @@ class GreenvilleRevenue
                 {
                     if (detailedContestants[j].TalentCode == tCodeInput)
                     {
-                        WriteLine($"{detailedContestants[j].Name}");
+                        WriteLine(detailedContestants[j].ToString());
                     }
+
                 }
             }
             else
@@ -378,9 +381,6 @@ class GreenvilleRevenue
             }
         }
     }
-
-
-
 }
 /*
  Instructions
